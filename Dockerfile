@@ -1,8 +1,13 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.04 
 
-RUN apt-get update
+RUN apt update && apt install openssh-server -y
 
-RUN apt-get install wget -y && \
-    apt-get install curl -y && \
-    apt-get install nano -y && \
-    apt-get install nmap -y
+RUN  echo 'root:password' | chpasswd
+
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+
+RUN service ssh start
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd","-D"]
